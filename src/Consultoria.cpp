@@ -58,3 +58,18 @@ void Consultoria::Busca_Poder_Exato(int poder, Lista<int>& busca) {
 void Consultoria::Busca_Faixa_Poder(int min, int max, Lista<Par>& busca) {
     indice->Faixa(min, max, busca);
 }
+
+int Consultoria::Fila_Consultoria(Filiado cliente) {
+    fila.Insere(cliente);
+    return fila.Get_Tamanho();
+}
+
+int Consultoria::Turnos_Atendimento(int k, Lista<Filiado>& atendidos) {
+    atendidos.Limpa();
+    while(fila.Get_Tamanho() != 0 && k > 0) {
+        Filiado cliente_atendido = fila.Remove();
+        atendidos.Insere_Final(cliente_atendido);
+        k--;
+    }
+    return atendidos.Get_Tamanho();
+}

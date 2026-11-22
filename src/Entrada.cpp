@@ -106,9 +106,39 @@ void Terminal_Rota(Consultoria& c, std::stringstream& ss) {}
 
 void Terminal_Conectividade(Consultoria& c, std::stringstream& ss) {}
 
-void Terminal_Fila_Consultoria(Consultoria& c, std::stringstream& ss) {}
+void Terminal_Fila_Consultoria(Consultoria& c, std::stringstream& ss) {
+    int id_c, prioridade; ss >> id_c; ss >> prioridade;
 
-void Terminal_Atendimento(Consultoria& c, std::stringstream& ss) {}
+    auto inicio = std::chrono::high_resolution_clock::now();
+    int tamanho_fila = c.Fila_Consultoria({id_c, prioridade});
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_F.total_ms += std::chrono::duration<double, std::micro>(fim - inicio).count();
+    tempo_F.chamadas++;
+
+    std::cout << "F " << tamanho_fila << std::endl;
+}
+
+void Terminal_Atendimento(Consultoria& c, std::stringstream& ss) {
+    int turnos; ss >> turnos;
+    Lista<Filiado> atendidos;
+
+    auto inicio = std::chrono::high_resolution_clock::now();
+    // turnos => vira turnos que passaram
+    turnos = c.Turnos_Atendimento(turnos, atendidos);
+
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_Z.total_ms += std::chrono::duration<double, std::micro>(fim - inicio).count();
+    tempo_Z.chamadas++;
+    std::cout << "Z " << turnos << std::endl;
+    
+    for (int i = 1; i <= turnos; i++) {
+        Filiado& fila = atendidos.Get_Item(i-1); // i começa em 1
+        std::cout << "atendimento_" << i << " " << fila.id_cliente
+                  << " " << fila.prioridade; 
+        if (i < turnos) std::cout << " ";
+    }
+    if(turnos > 0) std::cout << std::endl;
+}
 
 void Comando(Consultoria& c, std::string& linha) {
     std::string token; 
