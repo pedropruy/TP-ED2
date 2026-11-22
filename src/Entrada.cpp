@@ -100,11 +100,36 @@ void Terminal_BFaixa_Poder(Consultoria& c, std::stringstream& ss) {
     std::cout << std::endl;
 }
 
-void Terminal_Regiao(Consultoria& c, std::stringstream& ss) {}
+void Terminal_Regiao(Consultoria& c, std::stringstream& ss) {
+    std::string nome; ss >> nome;
+    std::cout << "R " << c.Cadastro_Regiao(nome) << std::endl;
+}
 
-void Terminal_Rota(Consultoria& c, std::stringstream& ss) {}
+void Terminal_Rota(Consultoria& c, std::stringstream& ss) {
+    int id_r1, id_r2, custo;
+    ss >> id_r1; ss >> id_r2; ss >> custo;
+    c.Cadastro_Rota(id_r1, id_r2, custo);
 
-void Terminal_Conectividade(Consultoria& c, std::stringstream& ss) {}
+    std::cout << "T " << c.Get_Nome_Regiao(id_r1) << " "
+              << c.Get_Nome_Regiao(id_r2) << " " << custo << std::endl;
+}
+
+void Terminal_Inverter_Pesquisa_Conectividade(Consultoria& c) {
+    bool union_find = c.Inverte_Union_Find();
+    std::cout << "I ";
+    if (union_find) std::cout << "Percorre DSU";
+    else std::cout << "Percorre Mapa";
+}
+
+void Terminal_Conectividade(Consultoria& c, std::stringstream& ss) {
+    int id_r1, id_r2; ss >> id_r1; ss >> id_r2;
+    bool conectadas = c.Regioes_Conectadas(id_r1, id_r2);
+
+    std::cout << "CC " << c.Get_Nome_Regiao(id_r1) << " "
+              << c.Get_Nome_Regiao(id_r2);
+    if (conectadas) std::cout << " SIM" << std::endl;
+    else std::cout << " NAO" << std::endl;
+}
 
 void Terminal_Fila_Consultoria(Consultoria& c, std::stringstream& ss) {
     int id_c, prioridade; ss >> id_c; ss >> prioridade;
@@ -153,6 +178,7 @@ void Comando(Consultoria& c, std::string& linha) {
     else if (token == "BF") Terminal_BFaixa_Poder(c, ss);
     else if (token == "R") Terminal_Regiao(c, ss);
     else if (token == "T") Terminal_Rota(c, ss);
+    else if (token == "I") Terminal_Inverter_Pesquisa_Conectividade(c);
     else if (token == "CC") Terminal_Conectividade(c, ss);
     else if (token == "F") Terminal_Fila_Consultoria(c, ss);
     else if (token == "Z") Terminal_Atendimento(c, ss);

@@ -19,7 +19,6 @@ bool inline operator> (const Filiado& a, const Filiado& b) {
 
 class Heap {
     public:
-        Heap(); ~Heap(); // acho que não precisa de construtor ou destrutor
         int Get_Tamanho() const;
         void Insere(int id_cliente, int prioridade);
         void Insere(Filiado cliente);

@@ -7,6 +7,7 @@ Consultoria::~Consultoria() { delete indice; }
 const std::string& Consultoria::Get_Nome_Atributo(int ind) { return atributos[ind].Get_Nome(); }
 const int Consultoria::Get_Tamanho_Atributo() { return atributos.Get_Tamanho(); }
 const std::string& Consultoria::Get_Nome_Cliente(int ind) { return clientes[ind].Get_Nome(); }
+const std::string& Consultoria::Get_Nome_Regiao(int ind) { return mapa.Get_Nome_Regiao(ind); }
 
 char Consultoria::Modo(char modo) {
     bool AVL = (dynamic_cast<ArvoreAVL*>(indice) != nullptr),
@@ -57,6 +58,28 @@ void Consultoria::Busca_Poder_Exato(int poder, Lista<int>& busca) {
 
 void Consultoria::Busca_Faixa_Poder(int min, int max, Lista<Par>& busca) {
     indice->Faixa(min, max, busca);
+}
+
+int Consultoria::Cadastro_Regiao(const std::string& nome) {
+    int id_r = mapa.Adicionar_Regiao(nome);
+    conjuntos_disjuntos.Make(id_r);
+    return id_r;
+}
+
+void Consultoria::Cadastro_Rota(int id_regiao1, int id_regiao2, int custo) {
+    mapa.Adicionar_Rota(id_regiao1, id_regiao2, custo);
+    conjuntos_disjuntos.Union(id_regiao1, id_regiao2);
+}
+
+bool Consultoria::Inverte_Union_Find() {
+    union_find = !union_find;
+    return union_find;
+}
+
+bool Consultoria::Regioes_Conectadas(int id_regiao1, int id_regiao2) {
+    if (union_find)
+        return conjuntos_disjuntos.Find(id_regiao1) == conjuntos_disjuntos.Find(id_regiao2);
+    else return mapa.Conectados_Busca(id_regiao1, id_regiao2);
 }
 
 int Consultoria::Fila_Consultoria(Filiado cliente) {

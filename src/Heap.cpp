@@ -1,8 +1,5 @@
 #include "../include/Heap.hpp"
 
-Heap::Heap() {}
-Heap::~Heap() {}
-
 int Heap::Get_Tamanho() const { return fila.Get_Tamanho(); }
 
 void Heap::Insere(Filiado cliente) {

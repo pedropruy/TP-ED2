@@ -6,11 +6,26 @@ C Grunilda 2 0 40 1 35
 C Thorin 2 0 60 2 10
 C Legolas 3 0 20 1 20 2 35
 C Blibblon 1 1 75
+R Vilarejo
+R Floresta
+R Caverna
+R Pico
+R IlhaPerdida
+T 0 1 4
+T 1 2 3
+T 0 2 9
+T 2 3 2
 BP 75
 BF 70 80
+CC 0 3
+CC 0 4
+F 2 5
+F 0 9
+F 1 5
+Z 2
 D 3
 BP 75
 BF 70 80
 E H
 BF 0 200
-
+Z 5

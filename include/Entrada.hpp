@@ -25,6 +25,8 @@ void Terminal_Regiao(Consultoria& c, std::stringstream& ss);
 
 void Terminal_Rota(Consultoria& c, std::stringstream& ss);
 
+void Terminal_Inverter_Pesquisa_Conectividade(Consultoria& c);
+
 void Terminal_Conectividade(Consultoria& c, std::stringstream& ss);
 
 void Terminal_Fila_Consultoria(Consultoria& c, std::stringstream& ss);
