@@ -1,0 +1,14 @@
+E A
+A Forca
+A Magia
+A Furtividade
+C Grunilda 2 0 40 1 35
+C Thorin 2 0 60 2 10
+C Legolas 3 0 20 1 20 2 35
+C Blibblon 1 1 75
+BP 75
+BF 70 80
+D 3
+BP 75
+BF 70 80
+BF 0 200

@@ -1,4 +1,4 @@
-#include "../include/ArvoreAVL.hpp"
+#include "../include/Indice.hpp"
 
 TipoNo::TipoNo() {
     item = {-1, 0};
@@ -35,8 +35,8 @@ void ArvoreAVL::LiberaRecursivo(TipoNo* p) {
 int ArvoreAVL::Get_Tamanho() const { return tamanho; }
 int ArvoreAVL::Altura() const { return Altura(raiz); }
 
-void ArvoreAVL::Inserir(int chave, int valor) {
-    Par p = {chave, valor};
+void ArvoreAVL::Inserir(int poder, int id_cliente) {
+    Par p = {id_cliente, poder};
     InsereRecursivo(raiz, p);
 }
 
@@ -47,34 +47,34 @@ void ArvoreAVL::InsereRecursivo(TipoNo* &p, Par item) {
         return; // novo
     }
 
-    if (item.poder < p->item.poder) InsereRecursivo(p->esq, item);
-    else if (item.poder > p->item.poder) InsereRecursivo(p->dir, item);
+    if (item.valor < p->item.valor) InsereRecursivo(p->esq, item);
+    else if (item.valor > p->item.valor) InsereRecursivo(p->dir, item);
     else {
         // Desempate pelo id_cliente
-        if (item.id_cliente < p->item.id_cliente)
+        if (item.id_objeto < p->item.id_objeto)
             InsereRecursivo(p->esq, item);
-        else if (item.id_cliente > p->item.id_cliente)
+        else if (item.id_objeto > p->item.id_objeto)
             InsereRecursivo(p->dir, item);
         else return; // Par duplicado
     }
     Balanceia(p); // novo
 }
 
-void ArvoreAVL::Remover(int chave, int valor) {
-    Par p = {chave, valor};
+void ArvoreAVL::Remover(int poder, int id_cliente) {
+    Par p = {id_cliente, poder};
     RemoveRecursivo(raiz, p);
 }
 
 void ArvoreAVL::RemoveRecursivo(TipoNo* &p, Par item) {
     if (p == nullptr) return; // não achou
 
-    if (item.poder < p->item.poder) RemoveRecursivo(p->esq, item);
-    else if (item.poder > p->item.poder) RemoveRecursivo(p->dir, item);
+    if (item.valor < p->item.valor) RemoveRecursivo(p->esq, item);
+    else if (item.valor > p->item.valor) RemoveRecursivo(p->dir, item);
     else {
         // Desempate pelo id_cliente
-        if (item.id_cliente < p->item.id_cliente)
+        if (item.id_objeto < p->item.id_objeto)
             RemoveRecursivo(p->esq, item);
-        else if (item.id_cliente > p->item.id_cliente)
+        else if (item.id_objeto > p->item.id_objeto)
             RemoveRecursivo(p->dir, item);
         else {
             // Achou o nó exato a ser removido
@@ -100,22 +100,23 @@ int ArvoreAVL::Altura(TipoNo* p) const {
     return p->altura;
 }
 
-void ArvoreAVL::Buscar(int chave, Lista<int>& resultado) const {
+void ArvoreAVL::Buscar(int poder, Lista<int>& resultado) const {
     resultado.Limpa();
-    BuscaRecursivo(raiz, chave, resultado);
+    BuscaRecursivo(raiz, poder, resultado);
+    //QuickSort(resultado);
 }
 
-void ArvoreAVL::BuscaRecursivo(TipoNo* p, int chave, Lista<int>& resultado) const {
+void ArvoreAVL::BuscaRecursivo(TipoNo* p, int poder, Lista<int>& resultado) const {
     if (p == nullptr) return;
 
-    if (chave < p->item.poder) {
-        BuscaRecursivo(p->esq, chave, resultado);
-    } else if (chave > p->item.poder) {
-        BuscaRecursivo(p->dir, chave, resultado);
+    if (poder < p->item.valor) {
+        BuscaRecursivo(p->esq, poder, resultado);
+    } else if (poder > p->item.valor) {
+        BuscaRecursivo(p->dir, poder, resultado);
     } else {
-        BuscaRecursivo(p->esq, chave, resultado);
-        resultado.Insere_Final(p->item.id_cliente);
-        BuscaRecursivo(p->dir, chave, resultado);
+        BuscaRecursivo(p->esq, poder, resultado);
+        resultado.Insere_Final(p->item.id_objeto);
+        BuscaRecursivo(p->dir, poder, resultado);
     }
 }
 
@@ -128,14 +129,14 @@ void ArvoreAVL::FaixaRecursivo(TipoNo* p, int min, int max, Lista<Par>& resultad
     if (p == nullptr) return;
 
     // Para a esquerda caso encontrarmos um valor menor
-    if (p->item.poder >= min)
+    if (p->item.valor >= min)
         FaixaRecursivo(p->esq, min, max, resultado);
 
-    if (p->item.poder >= min && p->item.poder <= max)
+    if (p->item.valor >= min && p->item.valor <= max)
         resultado.Insere_Final(p->item);
 
     // Para a direita caso encontrarmos um valor maior
-    if (p->item.poder <= max)
+    if (p->item.valor <= max)
         FaixaRecursivo(p->dir, min, max, resultado);
     
 }
@@ -152,12 +153,24 @@ void ArvoreAVL::TodosRecursivo(TipoNo* p, Lista<Par>& resultado) const {
     TodosRecursivo(p->dir, resultado);
 }
 
+void ArvoreAVL::Converter_Indice(Indice& i) {
+    TabelaHash* th = dynamic_cast<TabelaHash*>(&i);
+    if (th == nullptr) throw "Classe Indice invalida!";
+
+    Lista<Par> todos_pares;
+    Todos(todos_pares);
+    for(auto& par : todos_pares)
+        th->Inserir(par.valor, par.id_objeto);
+}
+
 int ArvoreAVL::FB(TipoNo* p) const {
     return Altura(p->dir) - Altura(p->esq);
 }
 
 void ArvoreAVL::AtualizaAltura(TipoNo* p) {
-    int maior_altura = 0, esq_altura = Altura(p->esq), dir_altura = Altura(p->dir);
+    int maior_altura = 0, esq_altura = Altura(p->esq),
+        dir_altura = Altura(p->dir);
+
     if (esq_altura > dir_altura) maior_altura = esq_altura;
     else maior_altura = dir_altura;
 

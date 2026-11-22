@@ -253,6 +253,17 @@ TipoCelula<TipoItem>* ListaEncadeada<TipoItem>::Posiciona(int pos, bool antes) {
 
 template<typename TipoItem>
 TipoCelula<TipoItem>* ListaEncadeada<TipoItem>::Posiciona(int pos, bool antes) const {
-    TipoCelula<TipoItem> *p = Posiciona(pos, antes);
+    if ((pos > tamanho) || (pos <= 0))
+        throw "ERRO: Posicao Invalida!";
+    TipoCelula<TipoItem> *p; 
+    int i; 
+
+    // posiciona na célula anterior à desejada
+    p = primeiro;
+    for (i = 1; i < pos; i++)
+        p = p->prox;
+    // vai para a próxima se antes for false
+    if (!antes) p = p->prox;
+
     return p;
 }

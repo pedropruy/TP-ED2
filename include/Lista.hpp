@@ -39,8 +39,13 @@ class Lista {
         void Imprime() const;
         void Limpa();
 
+        // Funções para facilitar minha vida!
         TipoItem& operator[](int ind);
         const TipoItem& operator[](int ind) const;
+        TipoItem* begin();
+        TipoItem* end();
+        const TipoItem* begin() const;
+        const TipoItem* end() const;
 };
  
 #include "../src/Lista.tpp"

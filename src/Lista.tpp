@@ -184,6 +184,15 @@ const TipoItem& Lista<TipoItem>::operator[](int ind) const {
 }
 
 template<typename TipoItem>
+TipoItem* Lista<TipoItem>::begin() { return itens; }
+template<typename TipoItem>
+const TipoItem* Lista<TipoItem>::begin() const { return itens; }
+template<typename TipoItem>
+TipoItem* Lista<TipoItem>::end() { return itens + tamanho; }
+template<typename TipoItem>
+const TipoItem* Lista<TipoItem>::end() const { return itens + tamanho; }
+
+template<typename TipoItem>
 void Lista<TipoItem>::Dobrar_Tamanho() {
     int nova_capacidade = capacidade*2;
     TipoItem* novo_itens = new TipoItem[nova_capacidade]; 
