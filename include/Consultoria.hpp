@@ -23,7 +23,7 @@ class Consultoria {
         void Busca_Faixa_Poder(int min, int max, Lista<Par>& busca); // BF
         int Cadastro_Regiao(const std::string& nome); // R
         void Cadastro_Rota(int id_regiao1, int id_regiao2, int custo); // T
-        bool Inverte_Union_Find(); // I
+        bool Inverte_Busca_do_Caminho(); // I
         bool Regioes_Conectadas(int id_regiao1, int id_regiao2); // CC
         int Fila_Consultoria(Filiado cliente); // F
         int Turnos_Atendimento(int k, Lista<Filiado>& atendidos); // Z

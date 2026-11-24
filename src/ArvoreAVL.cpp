@@ -33,7 +33,7 @@ void ArvoreAVL::LiberaRecursivo(TipoNo* p) {
 }
 
 int ArvoreAVL::Get_Tamanho() const { return tamanho; }
-int ArvoreAVL::Altura() const { return Altura(raiz); }
+int ArvoreAVL::Get_Altura() const { return Altura(raiz); }
 
 void ArvoreAVL::Inserir(int poder, int id_cliente) {
     Par p = {id_cliente, poder};

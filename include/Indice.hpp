@@ -86,7 +86,7 @@ class ArvoreAVL : public Indice {
         ArvoreAVL(); ~ArvoreAVL();
 
         int Get_Tamanho() const override;
-        int Altura() const;
+        int Get_Altura() const;
         void Inserir(int pode, int id_cliente) override;
         void Remover(int pode, int id_cliente) override;
 

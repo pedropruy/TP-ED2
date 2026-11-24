@@ -71,7 +71,7 @@ void Consultoria::Cadastro_Rota(int id_regiao1, int id_regiao2, int custo) {
     conjuntos_disjuntos.Union(id_regiao1, id_regiao2);
 }
 
-bool Consultoria::Inverte_Union_Find() {
+bool Consultoria::Inverte_Busca_do_Caminho() {
     union_find = !union_find;
     return union_find;
 }

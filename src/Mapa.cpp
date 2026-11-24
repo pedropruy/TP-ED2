@@ -2,7 +2,6 @@
 
 Mapa::Mapa() {
     num_rotas = 0;
-    rodada = 0;
     visitadas_ultima = 0;
     visitadas_total = 0;
 }
@@ -15,7 +14,7 @@ int Mapa::Adicionar_Regiao(const std::string& nome) {
     nomes.Insere_Final(nome);
     Lista<No> rotas;
     listas.Insere_Final(rotas);
-    marca.Insere_Final(0); // nasce não visitada (rodada começa em 1)
+    marca.Insere_Final(false);
     return listas.Get_Tamanho()-1;
 }
 void Mapa::Adicionar_Rota(int u, int v, int custo) {
@@ -24,37 +23,32 @@ void Mapa::Adicionar_Rota(int u, int v, int custo) {
     num_rotas++;
 }
 
-// BFS com early exit. Em vez de zerar um vetor de visitados a cada consulta (O(V)),
-// usamos a "rodada": v foi visitado nesta busca <=> marca[v] == rodada.
 bool Mapa::Conectados_Busca(int origem, int destino) {
     visitadas_ultima = 0;
-    rodada++;
-    fila.Limpa();
 
-    // Uma região sempre alcança a si mesma (mesma resposta do union-find)
-    marca[origem] = rodada;
-    visitadas_ultima++;
-    fila.Insere_Final(origem);
-    bool achou = (origem == destino);
-
-    int ini = 0; // índice de leitura da fila (sem remover elementos)
-    while (!achou && ini < fila.Get_Tamanho()) {
-        int u = fila[ini++];
-        const Lista<No>& vizinhos = listas[u];
-
-        for (int i = 0; i < vizinhos.Get_Tamanho(); i++) {
-            int v = vizinhos[i].destino;
-            if (marca[v] == rodada) continue; // já visitada
-
-            marca[v] = rodada;
-            visitadas_ultima++;
-            if (v == destino) { achou = true; break; }
-            fila.Insere_Final(v);
-        }
-    }
-
+    bool achou = Busca_Em_Profundidade(origem, destino);
     visitadas_total += visitadas_ultima;
+
+    // Define falso em todos os vertices
+    for(int i = 0; i < marca.Get_Tamanho(); i++)
+        marca[i] = false;
     return achou;
+}
+
+bool Mapa::Busca_Em_Profundidade(int atual, int destino) {
+    // Passamos pelo ponto atual
+    marca[atual] = true;
+    visitadas_ultima++;
+
+    if (atual == destino) return true;
+
+    const Lista<No>& vizinhos = listas[atual];
+    for (int i = 0; i < vizinhos.Get_Tamanho(); i++) {
+        int vizinho = vizinhos[i].destino;
+        if (!marca[vizinho])
+            if (Busca_Em_Profundidade(vizinho, destino)) return true;
+    }
+    return false;
 }
 
 int Mapa::Regioes_Visitadas_Ultima() const { return visitadas_ultima; }

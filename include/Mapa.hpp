@@ -30,10 +30,8 @@ class Mapa {
         Lista<Lista<No>> listas;
         int num_rotas;
 
-        // Buffers reaproveitados entre buscas (sem alocar dentro do laço medido)
-        Lista<int> marca; // marca[v] == rodada  <=>  v visitado
-        Lista<int> fila; // fila da BFS: índice de leitura + push, sem remoção
-        int rodada;
+        Lista<bool> marca; // Usada para dizer se já passamos nesse ponto nessa busca
+        bool Busca_Em_Profundidade(int atual, int destino);
 
         int visitadas_ultima;
         long long visitadas_total;

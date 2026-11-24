@@ -115,7 +115,7 @@ void Terminal_Rota(Consultoria& c, std::stringstream& ss) {
 }
 
 void Terminal_Inverter_Pesquisa_Conectividade(Consultoria& c) {
-    bool union_find = c.Inverte_Union_Find();
+    bool union_find = c.Inverte_Busca_do_Caminho();
     std::cout << "I ";
     if (union_find) std::cout << "Percorre DSU";
     else std::cout << "Percorre Mapa";
