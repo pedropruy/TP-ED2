@@ -12,19 +12,19 @@ class Lista {
         void Dobrar_Tamanho();
  
         // Variáveis da análise experimental
-        long long deslocados = 0;
         long long alocacoes = 0;
         long long liberacoes = 0;
-        long long copiados = 0;
     public:
         Lista(); ~Lista();
         Lista(const Lista &l);
         Lista& operator= (const Lista &l);
 
         int Get_Tamanho(); int Get_Tamanho() const;
-        Analise Get_Contadores() const; void Zerar_Contadores();
         int Get_Capacidade() const;
         TipoItem& Get_Item(int ind); TipoItem& Get_Item(int ind) const;
+        
+        // Variáveis de análise
+        Analise Get_Analise() const; void Zerar_Analise();
 
         void Set_Item(const TipoItem& item, int ind);
         void Insere_Inicio(const TipoItem& item);

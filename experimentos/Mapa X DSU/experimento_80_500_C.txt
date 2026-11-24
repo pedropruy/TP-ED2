@@ -1,0 +1,31 @@
+(Analise do Mapa)
+Comparacoes:        0
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    0
+Rehashes (Hash):    0
+Regioes visitadas:  0
+Alocacoes:          5030
+Liberacoes:         4527
+Memoria (bytes):    2097552
+
+(Analise dos Conjuntos Disjuntos)
+Comparacoes:        100299
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    0
+Rehashes (Hash):    0
+Regioes visitadas:  398584
+Alocacoes:          20
+Liberacoes:         18
+Memoria (bytes):    4296
+
+(Tempo Medio por Comando em Milisegundos)
+E  - 0.0035
+C  - 0.0143
+D  - 0.0000
+BP - 0.0000
+BF - 0.0000
+CC - 0.0000
+F  - 0.0000
+Z  - 0.0000

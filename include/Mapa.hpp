@@ -15,26 +15,23 @@ class Mapa {
         int Get_Num_Regioes() const;
         int Get_Num_Rotas() const;
 
+        // Variáveis de análise
+        Analise Get_Analise() const; void Zerar_Analise();
+
         int Adicionar_Regiao(const std::string& nome); // retorna o id
         void Adicionar_Rota(int u, int v, int custo); // mão dupla: insere nas duas listas
 
         // Conectividade por busca (alternativa ao union-find)
         bool Conectados_Busca(int origem, int destino);
-
-        // Instrumentação
-        int Regioes_Visitadas_Ultima() const;
-        long long Regioes_Visitadas_Total() const;
-
     private:
+        mutable Analise ana;
+
         Lista<std::string> nomes;
         Lista<Lista<No>> listas;
         int num_rotas;
 
         Lista<bool> marca; // Usada para dizer se já passamos nesse ponto nessa busca
         bool Busca_Em_Profundidade(int atual, int destino);
-
-        int visitadas_ultima;
-        long long visitadas_total;
 };
 
 #endif

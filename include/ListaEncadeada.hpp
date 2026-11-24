@@ -1,6 +1,8 @@
 #ifndef LISTAENCADEADA_HPP
 #define LISTAENCADEADA_HPP
 
+#include "Analise.hpp"
+
 template<typename TipoItem> class ListaEncadeada;
 class TabelaHash;
 
@@ -27,6 +29,9 @@ class ListaEncadeada {
         TipoItem& Get_Item(int ind); TipoItem& Get_Item(int ind) const;
         void Set_Item(const TipoItem& item, int ind);
 
+        // Variáveis de análise
+        Analise Get_Analise() const; void Zerar_Analise();
+
         void Insere_Inicio(const TipoItem& item);
         void Insere_Final(const TipoItem& item);
         void Insere_Posicao(const TipoItem& item, int pos);
@@ -42,6 +47,8 @@ class ListaEncadeada {
         TipoItem& operator[](int ind);
         const TipoItem& operator[](int ind) const;
     private:
+        mutable Analise ana;
+        
         int tamanho;
         TipoCelula<TipoItem>* primeiro; // aponta para a cabeça
         TipoCelula<TipoItem>* ultimo; // aponta para a última

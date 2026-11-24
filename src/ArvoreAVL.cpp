@@ -30,10 +30,22 @@ void ArvoreAVL::LiberaRecursivo(TipoNo* p) {
     LiberaRecursivo(p->esq);
     LiberaRecursivo(p->dir);
     delete p;
+    CONTA(ana, liberacoes, 1);
 }
 
 int ArvoreAVL::Get_Tamanho() const { return tamanho; }
 int ArvoreAVL::Get_Altura() const { return Altura(raiz); }
+
+Analise ArvoreAVL::Get_Analise() const {
+    Analise aux = ana;
+    aux.altura_arvore = Get_Altura();
+    aux.bytes_memoria = sizeof(ArvoreAVL) + (tamanho * sizeof(TipoNo));
+    return aux;
+}
+
+void ArvoreAVL::Zerar_Analise() {
+    ana.Zerar();
+}
 
 void ArvoreAVL::Inserir(int poder, int id_cliente) {
     Par p = {id_cliente, poder};
@@ -43,56 +55,59 @@ void ArvoreAVL::Inserir(int poder, int id_cliente) {
 void ArvoreAVL::InsereRecursivo(TipoNo* &p, Par item) {
     if (p == nullptr) {
         p = new TipoNo(item);
+        CONTA(ana, alocacoes, 1);
         tamanho++;
-        return; // novo
+        return;
     }
 
+    CONTA(ana, comparacoes, 1);
     if (item.valor < p->item.valor) InsereRecursivo(p->esq, item);
     else if (item.valor > p->item.valor) InsereRecursivo(p->dir, item);
     else {
-        // Desempate pelo id_cliente
         if (item.id_objeto < p->item.id_objeto)
             InsereRecursivo(p->esq, item);
         else if (item.id_objeto > p->item.id_objeto)
             InsereRecursivo(p->dir, item);
-        else return; // Par duplicado
+        else return;
     }
-    Balanceia(p); // novo
+    Balanceia(p);
 }
 
 void ArvoreAVL::Remover(int poder, int id_cliente) {
     Par p = {id_cliente, poder};
     RemoveRecursivo(raiz, p);
 }
-
 void ArvoreAVL::RemoveRecursivo(TipoNo* &p, Par item) {
-    if (p == nullptr) return; // não achou
+    if (p == nullptr) return;
 
+    CONTA(ana, comparacoes, 1);
     if (item.valor < p->item.valor) RemoveRecursivo(p->esq, item);
     else if (item.valor > p->item.valor) RemoveRecursivo(p->dir, item);
     else {
-        // Desempate pelo id_cliente
         if (item.id_objeto < p->item.id_objeto)
             RemoveRecursivo(p->esq, item);
         else if (item.id_objeto > p->item.id_objeto)
             RemoveRecursivo(p->dir, item);
         else {
-            // Achou o nó exato a ser removido
             if (p->esq == nullptr || p->dir == nullptr) {
-                TipoNo *aux = p; // 0 ou 1 filho
+                TipoNo *aux = p;
                 p = (p->esq != nullptr) ? p->esq : p->dir;
-                delete aux;  
+                delete aux;
+                CONTA(ana, liberacoes, 1);
                 tamanho--;
-            } else { // 2 filhos
-                TipoNo *a = p->esq; // antecessor
-                while (a->dir != nullptr) a = a->dir;
+            } else {
+                TipoNo *a = p->esq;
+                while (a->dir != nullptr) {
+                    CONTA(ana, comparacoes, 1);
+                    a = a->dir;
+                }
                 p->item = a->item;
                 RemoveRecursivo(p->esq, a->item);
             }
         }
     }
 
-    if (p != nullptr) Balanceia(p); // na volta
+    if (p != nullptr) Balanceia(p);
 }
 
 int ArvoreAVL::Altura(TipoNo* p) const {
@@ -109,6 +124,7 @@ void ArvoreAVL::Buscar(int poder, Lista<int>& resultado) const {
 void ArvoreAVL::BuscaRecursivo(TipoNo* p, int poder, Lista<int>& resultado) const {
     if (p == nullptr) return;
 
+    CONTA(ana, comparacoes, 1);
     if (poder < p->item.valor) {
         BuscaRecursivo(p->esq, poder, resultado);
     } else if (poder > p->item.valor) {
@@ -127,7 +143,8 @@ void ArvoreAVL::Faixa(int min, int max, Lista<Par>& resultado) const {
 
 void ArvoreAVL::FaixaRecursivo(TipoNo* p, int min, int max, Lista<Par>& resultado) const {
     if (p == nullptr) return;
-
+    
+    CONTA(ana, comparacoes, 1);
     // Para a esquerda caso encontrarmos um valor menor
     if (p->item.valor >= min)
         FaixaRecursivo(p->esq, min, max, resultado);
@@ -178,6 +195,7 @@ void ArvoreAVL::AtualizaAltura(TipoNo* p) {
 }
 
 void ArvoreAVL::RotacaoDireita(TipoNo* &p) {
+    CONTA(ana, rotacoes, 1);
     TipoNo *f = p->esq; // f vai subir
     p->esq = f->dir; // beta troca de pai
     f->dir = p; // p desce
@@ -187,6 +205,7 @@ void ArvoreAVL::RotacaoDireita(TipoNo* &p) {
 }
 
 void ArvoreAVL::RotacaoEsquerda(TipoNo* &p) {
+    CONTA(ana, rotacoes, 1);
     TipoNo *f = p->dir; // f vai subir
     p->dir = f->esq; // beta troca de pai
     f->esq = p; // p desce

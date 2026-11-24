@@ -10,6 +10,8 @@
 class Consultoria {
     public:
         Consultoria(); ~Consultoria();
+        Analise Get_Analise(char TAD); //ANA, LEGAL NÉ?
+        void Zerar_Analises();
         // Devolvendo const std::string& para evitar cópia desnecessária de strings
         const std::string& Get_Nome_Atributo(int ind);
         const int Get_Tamanho_Atributo();
@@ -27,7 +29,6 @@ class Consultoria {
         bool Regioes_Conectadas(int id_regiao1, int id_regiao2); // CC
         int Fila_Consultoria(Filiado cliente); // F
         int Turnos_Atendimento(int k, Lista<Filiado>& atendidos); // Z
-        
     private:
         Lista<Atributo> atributos;
         Lista<Cliente> clientes;

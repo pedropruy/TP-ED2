@@ -23,6 +23,10 @@ class Indice {
         // Retorna a quantidade de itens salvos
         virtual int Get_Tamanho() const = 0;
 
+        // Retorna os dados para a analise
+        virtual Analise Get_Analise() const = 0;
+        virtual void Zerar_Analise() = 0;
+
         virtual void Inserir(int poder, int id_cliente) = 0;
         virtual void Remover(int poder, int id_cliente) = 0;
 
@@ -35,7 +39,11 @@ class Indice {
         // Retorna todos os atributos em uma lista
         virtual void Todos(Lista<Par>& resultado) const = 0;
         virtual void Converter_Indice(Indice& i) = 0;
+
     protected:
+        // Variável para análise experimental
+        mutable Analise ana;
+
         void QuickSort(Lista<int>& lista) const;
         void QuickSort(Lista<Par>& lista) const;
 };
@@ -47,6 +55,9 @@ class TabelaHash : public Indice {
         ~TabelaHash();
                 
         int Get_Tamanho() const override;
+        // Variáveis de análise
+        Analise Get_Analise() const override; void Zerar_Analise() override;
+
         void Inserir(int pode, int id_cliente) override;
         void Remover(int pode, int id_cliente) override;
         
@@ -55,6 +66,7 @@ class TabelaHash : public Indice {
 
         void Todos(Lista<Par>& resultado) const override;
         void Converter_Indice(Indice& i) override;
+
     private:
         // Assim evitamos cópias acidentais!
         TabelaHash(const TabelaHash&) = delete;
@@ -87,6 +99,9 @@ class ArvoreAVL : public Indice {
 
         int Get_Tamanho() const override;
         int Get_Altura() const;
+        // Variáveis de análise
+        Analise Get_Analise() const override; void Zerar_Analise() override;
+        
         void Inserir(int pode, int id_cliente) override;
         void Remover(int pode, int id_cliente) override;
 
@@ -95,6 +110,7 @@ class ArvoreAVL : public Indice {
 
         void Todos(Lista<Par>& resultado) const override;
         void Converter_Indice(Indice& i) override;
+
     private:
         // Assim evitamos cópias acidentais!
         ArvoreAVL(const ArvoreAVL&) = delete;

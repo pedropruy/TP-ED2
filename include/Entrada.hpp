@@ -7,6 +7,8 @@
 struct RegistroTempo {
     double total_ms = 0.0;
     int chamadas = 0;
+
+    void Zerar() { *this = RegistroTempo(); }
 };
 
 void Terminal_Modo(Consultoria& c, std::stringstream& ss);
@@ -32,6 +34,8 @@ void Terminal_Conectividade(Consultoria& c, std::stringstream& ss);
 void Terminal_Fila_Consultoria(Consultoria& c, std::stringstream& ss);
 
 void Terminal_Atendimento(Consultoria& c, std::stringstream& ss);
+
+void Terminal_Analise(Consultoria& c, std::stringstream& ss);
 
 void Comando(Consultoria& c, std::string& linha);
 

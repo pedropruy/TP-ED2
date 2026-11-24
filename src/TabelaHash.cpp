@@ -4,7 +4,6 @@ int Particao_Lomuto(Lista<int>& lista, int p, int r) {
     // Iremos escolher o pivô sempre ao meio
     int pos_pivo = p + (r - p) / 2;
     // Troca de lugar o pivô meio com o do fim
-    CONTA(ana_ord, movimentos_ord, 2); // troca pivô com o último
     int temp_pivo = lista.Get_Item(pos_pivo);
     int temp_fim = lista.Get_Item(r);
     lista.Set_Item(temp_fim, pos_pivo);
@@ -16,10 +15,8 @@ int Particao_Lomuto(Lista<int>& lista, int p, int r) {
         int Y = lista.Get_Item(j);
 
         // Comparamos apenas com o ID(int)
-        CONTA(ana_ord, comparacoes_ord, 1);
         if (Y < X) {
             i++;
-            CONTA(ana_ord, movimentos_ord, 2); // troca
             int w = lista.Get_Item(i);
             lista.Set_Item(Y, i);
             lista.Set_Item(w, j);
@@ -27,7 +24,6 @@ int Particao_Lomuto(Lista<int>& lista, int p, int r) {
     }
     
     // colocando w na posição de pivô
-    CONTA(ana_ord, movimentos_ord, 2); // coloca o pivô na posição final
     int w = lista.Get_Item(i + 1);
     lista.Set_Item(lista.Get_Item(r), i + 1);
     lista.Set_Item(w, r);
@@ -39,7 +35,6 @@ int Particao_Lomuto(Lista<Par>& lista, int p, int r) {
     // Iremos escolher o pivô sempre ao meio
     int pos_pivo = p + (r - p) / 2;
     // Troca de lugar o pivô meio com o do fim
-    CONTA(ana_ord, movimentos_ord, 2); // troca pivô com o último
     Par temp_pivo = lista.Get_Item(pos_pivo);
     Par temp_fim = lista.Get_Item(r);
     lista.Set_Item(temp_fim, pos_pivo);
@@ -50,11 +45,9 @@ int Particao_Lomuto(Lista<Par>& lista, int p, int r) {
     for (int j = p; j < r; j++) {
         Par J = lista.Get_Item(j);
         // Valor ser maior OU Se for o mesmo valor -> id é menor
-        CONTA(ana_ord, comparacoes_ord, 1);
         if (J.valor < X.valor ||
            (J.valor == X.valor && J.id_objeto < X.id_objeto)) {
             i++;
-            CONTA(ana_ord, movimentos_ord, 2); // troca
             // invertendo o lugar de item_j com item_w
             Par W = lista.Get_Item(i);
             lista.Set_Item(J, i);
@@ -63,7 +56,6 @@ int Particao_Lomuto(Lista<Par>& lista, int p, int r) {
     }
     
     // colocando w na posição de pivô
-    CONTA(ana_ord, movimentos_ord, 2); // coloca o pivô na posição final
     Par W = lista.Get_Item(i + 1);
     lista.Set_Item(lista.Get_Item(r), i + 1);
     lista.Set_Item(W, r);
@@ -101,16 +93,44 @@ void Indice::QuickSort(Lista<Par>& lista) const {
 
 TabelaHash::TabelaHash(int capacidade_inicial) : tamanho(0), M(capacidade_inicial) {
     Tabela = new ListaEncadeada<Par>[M];
+    CONTA(ana, alocacoes, 1);
 }
 
-TabelaHash::~TabelaHash() { delete[] Tabela; }
+TabelaHash::~TabelaHash() { 
+    delete[] Tabela; 
+    CONTA(ana, liberacoes, 1);
+}
                 
 int TabelaHash::Get_Tamanho() const { return tamanho; }
+
+Analise TabelaHash::Get_Analise() const {
+    Analise aux = ana;
+    for (int i = 0; i < M; i++) {
+        Analise b = Tabela[i].Get_Analise();
+        aux.comparacoes += b.comparacoes;
+        aux.alocacoes += b.alocacoes;
+        aux.liberacoes += b.liberacoes;
+    }
+    aux.bytes_memoria = sizeof(TabelaHash);
+    for (int i = 0; i < M; i++)
+        aux.bytes_memoria += Tabela[i].Get_Analise().bytes_memoria;
+
+    return aux;
+}
+
+void TabelaHash::Zerar_Analise() {
+    ana.Zerar();
+    for (int i = 0; i < M; i++)
+        Tabela[i].Zerar_Analise();
+}
 
 void TabelaHash::Inserir(int poder, int id_cliente) {
     if (tamanho >= M) ReHash();
 
     int ind = Hash(poder); // divisão devolve posição
+    if (Tabela[ind].Get_Tamanho() > 0)
+        CONTA(ana, colisoes, 1);
+
     Par p = {id_cliente, poder};
     Tabela[ind].Insere_Final(p);
     tamanho++;
@@ -132,6 +152,7 @@ void TabelaHash::Buscar(int poder, Lista<int>& resultado) const {
     
     while (p != nullptr) {
         Par par = p->Get_Item();
+        CONTA(ana, comparacoes, 1);
         if (par.valor == poder)
             resultado.Insere_Final(par.id_objeto);
         p = p->Get_Prox();
@@ -151,6 +172,7 @@ void TabelaHash::Faixa(int min, int max, Lista<Par>& resultado) const {
         TipoCelula<Par> *p = lista.primeiro->Get_Prox();
         while (p != nullptr) {
             Par par = p->Get_Item();
+            CONTA(ana, comparacoes, 1);
             if (par.valor >= min && par.valor <= max)
                 resultado.Insere_Final(par);
             p = p->Get_Prox();
@@ -191,14 +213,25 @@ int TabelaHash::Hash(int chave) const {
 }
 
 void TabelaHash::ReHash() {
+    CONTA(ana, rehashes, 1);
     Lista<Par> todos_valores;
     this->Todos(todos_valores);
 
-    this->M = (M*2) + 1; // Mantém o valor de M ímpar
+    // Salva os contadores antes de destruir os baldes antigos
+    for (int i = 0; i < M; i++) {
+        Analise b = Tabela[i].Get_Analise();
+        ana.comparacoes += b.comparacoes;
+        ana.alocacoes += b.alocacoes;
+        ana.liberacoes += b.liberacoes;
+    }
+
+    this->M = (M * 2) + 1; // Mantém o valor de M ímpar
     delete[] this->Tabela;
+    CONTA(ana, liberacoes, 1);
     this->Tabela = new ListaEncadeada<Par>[M];
+    CONTA(ana, alocacoes, 1);
 
     this->tamanho = 0;
-    for(auto& par : todos_valores)
+    for (auto& par : todos_valores)
         this->Inserir(par.valor, par.id_objeto);
 }

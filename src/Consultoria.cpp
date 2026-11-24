@@ -4,6 +4,36 @@
 Consultoria::Consultoria() { indice = new ArvoreAVL(); }
 Consultoria::~Consultoria() { delete indice; }
 
+Analise Consultoria::Get_Analise(char TAD) {
+    Analise ana;
+    switch(TAD) {
+        case 'I':
+            ana = indice->Get_Analise();
+            std::cout << "(Analise do Indice)" << std::endl;
+            break;
+        case 'F':
+            ana = fila.Get_Analise();
+            std::cout << "(Analise da Fila)" << std::endl;
+            break;
+        case 'M':
+            ana = mapa.Get_Analise();
+            std::cout << "(Analise do Mapa)" << std::endl;
+            break;
+        case 'C':
+            ana = conjuntos_disjuntos.Get_Analise();
+            std::cout << "(Analise dos Conjuntos Disjuntos)" << std::endl;
+            break;
+    }
+    return ana;
+}
+
+void Consultoria::Zerar_Analises() {
+    indice->Zerar_Analise();
+    fila.Zerar_Analise();
+    mapa.Zerar_Analise();
+    conjuntos_disjuntos.Zerar_Analise();
+}
+
 const std::string& Consultoria::Get_Nome_Atributo(int ind) { return atributos[ind].Get_Nome(); }
 const int Consultoria::Get_Tamanho_Atributo() { return atributos.Get_Tamanho(); }
 const std::string& Consultoria::Get_Nome_Cliente(int ind) { return clientes[ind].Get_Nome(); }

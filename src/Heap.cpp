@@ -2,6 +2,20 @@
 
 int Heap::Get_Tamanho() const { return fila.Get_Tamanho(); }
 
+Analise Heap::Get_Analise() const {
+    Analise aux = ana;
+    Analise a_fila = fila.Get_Analise();
+    aux.alocacoes += a_fila.alocacoes;
+    aux.liberacoes += a_fila.liberacoes;
+    aux.bytes_memoria = sizeof(Heap) + a_fila.bytes_memoria;
+    return aux;
+}
+
+void Heap::Zerar_Analise() {
+    ana.Zerar();
+    fila.Zerar_Analise();
+}
+
 void Heap::Insere(Filiado cliente) {
     fila.Insere_Final(cliente); // 1. nova folha no fim
     Sobe(fila.Get_Tamanho()-1); // 2. sobe
@@ -13,7 +27,9 @@ void Heap::Insere(int id_cliente, int prioridade) {
 
 void Heap::Sobe(int i) {
     int p = GetAncestral(i);
-    while (i > 0 && (fila[i] > fila[p])) {
+    while (i > 0) {
+        CONTA(ana, comparacoes, 1);
+        if (!(fila[i] > fila[p])) break;
         Filiado aux = fila[i]; fila[i] = fila[p]; fila[p] = aux; // swap
         i = p;
         p = GetAncestral(i);
@@ -34,8 +50,12 @@ void Heap::Desce(int i) {
         int e = GetSucessorEsq(i);
         int d = GetSucessorDir(i);
         int maior = i;
-        if (e < fila.Get_Tamanho() && fila[e] > fila[maior]) maior = e;
-        if (d < fila.Get_Tamanho() && fila[d] > fila[maior]) maior = d;
+        if (e < fila.Get_Tamanho() && fila[e] > fila[maior]) {
+            CONTA(ana, comparacoes, 1); maior = e;
+        }
+        if (d < fila.Get_Tamanho() && fila[d] > fila[maior]) {
+            CONTA(ana, comparacoes, 1); maior = d;
+        }
         if (maior == i) return; // ja esta no lugar
         Filiado aux = fila[i]; fila[i] = fila[maior]; fila[maior] = aux; // swap
         i = maior;

@@ -5,10 +5,14 @@ Lista<TipoItem>::Lista() {
     tamanho = 0;
     capacidade = 1;
     itens = new TipoItem[capacidade];
+    CONTA_VAR(alocacoes, 1);
 }
 
 template<typename TipoItem>
-Lista<TipoItem>::~Lista() { delete[] itens; }
+Lista<TipoItem>::~Lista() { 
+    delete[] itens; 
+    CONTA_VAR(liberacoes, 1);
+}
 
 template<typename TipoItem>
 Lista<TipoItem>::Lista(const Lista<TipoItem> &l) {
@@ -17,8 +21,6 @@ Lista<TipoItem>::Lista(const Lista<TipoItem> &l) {
 
     this->alocacoes = l.alocacoes;
     this->capacidade = l.capacidade;
-    this->copiados = l.copiados;
-    this->deslocados = l.deslocados;
     
     this->itens = new TipoItem[this->capacidade];
     for (int i = 0; i < this->tamanho; i++)
@@ -37,8 +39,6 @@ Lista<TipoItem>& Lista<TipoItem>::operator= (const Lista<TipoItem> &l) {
 
     this->alocacoes = l.alocacoes;
     this->capacidade = l.capacidade;
-    this->copiados = l.copiados;
-    this->deslocados = l.deslocados;
 
     this->itens = new TipoItem[this->capacidade];
     for (int i = 0; i < this->tamanho; i++)
@@ -57,19 +57,17 @@ template<typename TipoItem>
 int Lista<TipoItem>::Get_Capacidade() const { return capacidade; }
 
 template<typename TipoItem>
-Analise Lista<TipoItem>::Get_Contadores() const {
+Analise Lista<TipoItem>::Get_Analise() const {
     Analise a;
-    a.deslocados = deslocados;
     a.alocacoes = alocacoes;
     a.liberacoes = liberacoes;
-    a.copiados = copiados;
+    a.bytes_memoria = sizeof(Lista<TipoItem>) + (capacidade * sizeof(TipoItem));
     return a;
 }
 
 template<typename TipoItem>
-void Lista<TipoItem>::Zerar_Contadores() {
-    deslocados = 0; alocacoes = 0;
-    liberacoes = 0; copiados = 0;
+void Lista<TipoItem>::Zerar_Analise() {
+    alocacoes = 0; liberacoes = 0;
 }
 
 template<typename TipoItem>
@@ -94,7 +92,6 @@ template<typename TipoItem>
 void Lista<TipoItem>::Insere_Inicio(const TipoItem& item) {
     if (tamanho == capacidade) Dobrar_Tamanho();
     tamanho++;
-    CONTA_VAR(deslocados, tamanho-1);
     int i;
     for (i = tamanho-1; i > 0; i--) itens[i] = itens[i-1];
     itens[0] = item;
@@ -112,7 +109,6 @@ void Lista<TipoItem>::Insere_Posicao(const TipoItem& item, int pos) {
     if ((pos > tamanho+1) || (pos <= 0)) throw "Insere_Posicao: Posicao Invalida!";
     if (tamanho == capacidade) Dobrar_Tamanho();
     pos--; // posição no vetor = pos-1
-    CONTA_VAR(deslocados, tamanho - pos);
     int i;
     for (i = tamanho; i > pos; i--) itens[i] = itens[i-1];
     itens[pos] = item;
@@ -124,7 +120,6 @@ TipoItem Lista<TipoItem>::Remove_Inicio() {
     if (tamanho == 0) throw "ERRO: Lista vazia!";
     int i; TipoItem aux;
     aux = itens[0];
-    CONTA_VAR(deslocados, tamanho-1);
     for (i=0; i < tamanho-1; i++) itens[i] = itens[i+1];
     tamanho--;
     return aux;
@@ -144,9 +139,8 @@ TipoItem Lista<TipoItem>::Remove_Posicao(int pos) {
     if ((pos > tamanho) ||(pos <= 0)) throw "Remove_Posicao: Posicao Invalida!";
     pos--; // posição no vetor = pos-1
     int i; TipoItem aux;
-    aux = itens [pos];
-    CONTA_VAR(deslocados, tamanho-1-pos);
-    for (i= pos; i < tamanho-1; i++) itens[i] = itens[i+1];
+    aux = itens[pos];
+    for (i = pos; i < tamanho-1; i++) itens[i] = itens[i+1];
     tamanho--;
     return aux;
 }

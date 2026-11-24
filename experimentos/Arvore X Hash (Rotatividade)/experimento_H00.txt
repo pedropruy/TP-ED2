@@ -1,0 +1,20 @@
+(Analise do Indice)
+Comparacoes:        2708999
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    13204
+Rehashes (Hash):    9
+Regioes visitadas:  0
+Alocacoes:          33448
+Liberacoes:         9
+Memoria (bytes):    1125696
+
+(Tempo Medio por Comando em Milisegundos)
+E  - 0.0989
+C  - 0.0071
+D  - 0.0000
+BP - 0.0033
+BF - 0.1591
+CC - 0.0120
+F  - 0.5580
+Z  - 0.8681

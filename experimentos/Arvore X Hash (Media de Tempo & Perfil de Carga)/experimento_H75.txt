@@ -1,0 +1,53 @@
+(Analise do Indice)
+Comparacoes:        5049346
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    14654
+Rehashes (Hash):    9
+Regioes visitadas:  0
+Alocacoes:          34905
+Liberacoes:         2238
+Memoria (bytes):    1113344
+
+(Analise da Fila)
+Comparacoes:        1459
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    0
+Rehashes (Hash):    0
+Regioes visitadas:  0
+Alocacoes:          5
+Liberacoes:         4
+Memoria (bytes):    264
+
+(Analise do Mapa)
+Comparacoes:        103068
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    0
+Rehashes (Hash):    0
+Regioes visitadas:  48011
+Alocacoes:          1429
+Liberacoes:         1226
+Memoria (bytes):    126736
+
+(Analise dos Conjuntos Disjuntos)
+Comparacoes:        5174
+Rotacoes (AVL):     0
+Altura (AVL):       0
+Colisoes (Hash):    0
+Rehashes (Hash):    0
+Regioes visitadas:  19759
+Alocacoes:          18
+Liberacoes:         16
+Memoria (bytes):    2248
+
+(Tempo Medio por Comando em Milisegundos)
+E  - 0.5271
+C  - 0.0159
+D  - 0.0013
+BP - 0.0058
+BF - 0.3078
+CC - 0.0131
+F  - 0.6546
+Z  - 0.9718

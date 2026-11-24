@@ -20,18 +20,24 @@ bool inline operator> (const Filiado& a, const Filiado& b) {
 class Heap {
     public:
         int Get_Tamanho() const;
+
+        // Variáveis de análise
+        Analise Get_Analise() const; void Zerar_Analise();
+
         void Insere(int id_cliente, int prioridade);
         void Insere(Filiado cliente);
         Filiado Remove(); // tira o maior
         Filiado Maximo(); // apenas vê quem é o maior
         bool Vazio() const;
     private:
+        mutable Analise ana;
+        Lista<Filiado> fila;
+
         int GetAncestral(int i);
         int GetSucessorEsq(int i);
         int GetSucessorDir(int i);
         void Sobe(int i);
         void Desce(int i);
-        Lista<Filiado> fila;
 };
 
 #endif

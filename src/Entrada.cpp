@@ -5,31 +5,22 @@
 #include <iomanip>
 #include <chrono>
 
-static RegistroTempo tempo_E, tempo_M, tempo_F, tempo_Z,
-                     tempo_D, tempo_LI, tempo_LA, tempo_LH,
-                     tempo_LF, tempo_Q;
+static RegistroTempo tempo_E, tempo_D, tempo_C,
+                     tempo_BP, tempo_BF, tempo_CC,
+                     tempo_F, tempo_Z;
 
 void Terminal_Modo(Consultoria& c, std::stringstream& ss) {
     char modo;
     ss >> modo;
 
     if (modo == 'A' || modo == 'H') {
-        //long long Bytes_Antes = c.Get_Bytes_Matriz();
         auto inicio = std::chrono::high_resolution_clock::now();
-        
         char novo_modo = c.Modo(modo); 
-        
         auto fim = std::chrono::high_resolution_clock::now();
-        tempo_E.total_ms = std::chrono::duration<double, std::milli>(fim - inicio).count();
+        tempo_E.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
+        tempo_E.chamadas++;
 
         std::cout << "E " << novo_modo << std::endl;
-        /*std::cout << "Tempo E - " << tempo_E.total_ms << std::endl;
-
-        long long Bytes_Depois = j.Get_Bytes_Matriz();
-        std::cout << "B_Antes: " << Bytes_Antes << std::endl
-                  << "B_Depois: " << Bytes_Depois << std::endl
-                  << "Pico_Estimado: " << (Bytes_Antes + Bytes_Depois) << std::endl
-                  << j.Get_Analise_Catalogo() << std::endl;*/
     } else std::cout << "Modo invalido!" << std::endl;
 }
 
@@ -52,20 +43,38 @@ void Terminal_Cliente(Consultoria& c, std::stringstream& ss) {
         build[id_a] = {id_a, valor_a};
     }    
 
+    
+    auto inicio = std::chrono::high_resolution_clock::now();
     int poder = 0, id_c =  c.Cadastro_Cliente(nome, build, poder);
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_C.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
+    tempo_C.chamadas++;
+
     std::cout << "C " << id_c << " " << poder << std::endl;
 }
 
 void Terminal_Encerrar_Cliente(Consultoria& c, std::stringstream& ss) {
     int poder, id_c; ss >> id_c;
+
+    auto inicio = std::chrono::high_resolution_clock::now();
     c.Encerramento_Cliente(id_c, poder);
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_D.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
+    tempo_D.chamadas++;
+
     std::cout << "D " << c.Get_Nome_Cliente(id_c) << " " << poder << std::endl;
 }
 
 void Terminal_BPoder_Exato(Consultoria& c, std::stringstream& ss) {
     int poder; ss >> poder;
+
+    
+    auto inicio = std::chrono::high_resolution_clock::now();
     Lista<int> busca;
     c.Busca_Poder_Exato(poder, busca);
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_BP.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
+    tempo_BP.chamadas++;
     
     std::cout << "BP " << poder;
     // Caso não tenha encontrado nenhum
@@ -83,8 +92,13 @@ void Terminal_BPoder_Exato(Consultoria& c, std::stringstream& ss) {
 
 void Terminal_BFaixa_Poder(Consultoria& c, std::stringstream& ss) {
     int min, max; ss >> min; ss >> max;
+    
+    auto inicio = std::chrono::high_resolution_clock::now();
     Lista<Par> busca;
     c.Busca_Faixa_Poder(min, max, busca);
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_BF.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
+    tempo_BF.chamadas++;
     
     std::cout << "BF " << min << " " << max;
     // Caso não tenha encontrado nenhum
@@ -123,7 +137,12 @@ void Terminal_Inverter_Pesquisa_Conectividade(Consultoria& c) {
 
 void Terminal_Conectividade(Consultoria& c, std::stringstream& ss) {
     int id_r1, id_r2; ss >> id_r1; ss >> id_r2;
+    
+    auto inicio = std::chrono::high_resolution_clock::now();
     bool conectadas = c.Regioes_Conectadas(id_r1, id_r2);
+    auto fim = std::chrono::high_resolution_clock::now();
+    tempo_CC.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
+    tempo_CC.chamadas++;
 
     std::cout << "CC " << c.Get_Nome_Regiao(id_r1) << " "
               << c.Get_Nome_Regiao(id_r2);
@@ -137,7 +156,7 @@ void Terminal_Fila_Consultoria(Consultoria& c, std::stringstream& ss) {
     auto inicio = std::chrono::high_resolution_clock::now();
     int tamanho_fila = c.Fila_Consultoria({id_c, prioridade});
     auto fim = std::chrono::high_resolution_clock::now();
-    tempo_F.total_ms += std::chrono::duration<double, std::micro>(fim - inicio).count();
+    tempo_F.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
     tempo_F.chamadas++;
 
     std::cout << "F " << tamanho_fila << std::endl;
@@ -150,10 +169,10 @@ void Terminal_Atendimento(Consultoria& c, std::stringstream& ss) {
     auto inicio = std::chrono::high_resolution_clock::now();
     // turnos => vira turnos que passaram
     turnos = c.Turnos_Atendimento(turnos, atendidos);
-
     auto fim = std::chrono::high_resolution_clock::now();
-    tempo_Z.total_ms += std::chrono::duration<double, std::micro>(fim - inicio).count();
+    tempo_Z.total_ms += std::chrono::duration<double, std::milli>(fim - inicio).count();
     tempo_Z.chamadas++;
+
     std::cout << "Z " << turnos << std::endl;
     
     for (int i = 1; i <= turnos; i++) {
@@ -163,6 +182,81 @@ void Terminal_Atendimento(Consultoria& c, std::stringstream& ss) {
         if (i < turnos) std::cout << " ";
     }
     if(turnos > 0) std::cout << std::endl;
+}
+
+void Terminal_Analise(Consultoria& c, std::stringstream& ss) {
+    int qtd_analises; 
+    ss >> qtd_analises;
+    
+    if (qtd_analises == 0) {
+        c.Zerar_Analises();
+
+        tempo_E.Zerar(); tempo_D.Zerar(); tempo_C.Zerar();
+        tempo_BP.Zerar(); tempo_BF.Zerar(); tempo_CC.Zerar();
+        tempo_F.Zerar(); tempo_Z.Zerar();
+
+        std::cout << "ANA Analises zeradas!" << std::endl;
+    } else {
+        // Encontra o próximo nome disponível: experimento_1.txt, experimento_2.txt...
+        int num_exp = 1;
+        std::string nome_arquivo;
+        while (true) {
+            nome_arquivo = "experimento_" + std::to_string(num_exp) + ".txt";
+            std::ifstream teste(nome_arquivo);
+            if (!teste.good()) break; // Arquivo ainda não existe, podemos usar este nome
+            num_exp++;
+        }
+
+        std::ofstream arquivo(nome_arquivo);
+        if (!arquivo.is_open()) {
+            std::cerr << "Erro ao criar arquivo " << nome_arquivo << std::endl;
+            return;
+        }
+
+        // Salva o buffer e a formatação originais do cout
+        std::streambuf* buf_original = std::cout.rdbuf();
+        std::ios_base::fmtflags flags_originais = std::cout.flags();
+        std::streamsize precisao_original = std::cout.precision();
+
+        // Redireciona todo std::cout para o arquivo
+        std::cout.rdbuf(arquivo.rdbuf());
+
+        char TAD;
+        for (int i = 0; i < qtd_analises; i++) {
+            ss >> TAD;
+            if (TAD != 'I' && TAD != 'F' && TAD != 'M' && TAD != 'C') continue;
+            
+            Analise ana = c.Get_Analise(TAD);
+            std::cout << ana << std::endl << std::endl;
+        }
+
+        // Evita divisão por zero caso algum comando tenha 0 chamadas
+        auto media_ms = [](const RegistroTempo& r) -> double {
+            return (r.chamadas > 0) ? (r.total_ms / r.chamadas) : 0.0;
+        };
+
+        // Salva os tempos médios no arquivo
+        std::cout << "(Tempo Medio por Comando em Milisegundos)" << std::endl;
+        std::cout << std::fixed << std::setprecision(4);
+        std::cout << "E  - " << media_ms(tempo_E)  << std::endl;
+        std::cout << "C  - " << media_ms(tempo_C)  << std::endl;
+        std::cout << "D  - " << media_ms(tempo_D)  << std::endl;
+        std::cout << "BP - " << media_ms(tempo_BP) << std::endl;
+        std::cout << "BF - " << media_ms(tempo_BF) << std::endl;
+        std::cout << "CC - " << media_ms(tempo_CC) << std::endl;
+        std::cout << "F  - " << media_ms(tempo_F)  << std::endl;
+        std::cout << "Z  - " << media_ms(tempo_Z)  << std::endl;
+
+        // Restaura o buffer e a formatação originais do cout
+        std::cout.flush();
+        std::cout.rdbuf(buf_original);
+        std::cout.flags(flags_originais);
+        std::cout.precision(precisao_original);
+        arquivo.close();
+
+        std::cout << "ANA Arquivo salvo com sucesso!" << std::endl;
+    }
+    
 }
 
 void Comando(Consultoria& c, std::string& linha) {
@@ -182,5 +276,6 @@ void Comando(Consultoria& c, std::string& linha) {
     else if (token == "CC") Terminal_Conectividade(c, ss);
     else if (token == "F") Terminal_Fila_Consultoria(c, ss);
     else if (token == "Z") Terminal_Atendimento(c, ss);
+    else if (token == "ANA") Terminal_Analise(c, ss);
     else std::cout << "Comando invalido!" << std::endl;
 }
